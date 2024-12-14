@@ -10,52 +10,46 @@
 
 <body>
     <div class="background">
-        <!-- 图片详情按钮 -->
-        <div id="image-info" class="image-info hidden">
-            <img src="images/picture_2.svg" alt="图片图标">
-            <span>图片详情</span>
-        </div>
-
-        <!-- 每日一图刷新按钮 -->
-        <div id="refresh-image" class="image-info">
-            <img src="images/arrow_clockwise.svg" alt="随机每日一图">
-            <span>随机每日一图</span>
-        </div>
-
-        <div id="today-image" class="today-image">
-            <img src="images/position.svg" alt="回到今天每日一图">
-            <span>回到今天每日一图</span>
-        </div>
-
-        <!-- 时间与名言 -->
-        <div class="info-container">
-            <div class="time-box">
-                <div class="time-icon">
-                    <img src="images/calendar_badge_clock.svg" alt="时间图标">
-                </div>
-                <div class="time-info">
-                    <div class="label" id="time-label">当前时间</div>
-                    <div id="time">加载中...</div>
-                    <div id="date"></div>
-                    <!-- 更新时间按钮 -->
-                    <div id="refresh-time" class="refresh-icon">
-                        <img src="images/arrow_clockwise.svg" alt="更新时间">
+        <div class="background">
+            <!-- 时间与名言容器 -->
+            <div class="info-container">
+                <div class="info-item">
+                    <div class="info-header">
+                        <img src="images/calendar_badge_clock.svg" alt="calendar-icon">
+                        <span>当前时间</span>
+                        <span class="refresh-icon" id="refresh-time">
+                            <img src="images/arrow_clockwise.svg" alt="refresh-icon">
+                        </span>
                     </div>
+                    <div class="info-content" id="time">加载中...</div>
+                    <div class="info-footer" id="date">加载中...</div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-header">
+                        <img src="images/book_pages_fill_1.svg" alt="quote-icon">
+                        <span>名言名句</span>
+                    </div>
+                    <div class="info-content" id="quote">加载中...</div>
+                    <div class="info-footer" id="author">加载中...</div>
                 </div>
             </div>
 
-            <div class="quote-box">
-                <div class="quote-icon">
-                    <img src="images/book_pages_fill_1.svg" alt="名言图标">
-                </div>
-                <div class="quote-info">
-                    <div class="label" id="quote-label">名言名句</div>
-                    <div id="quote">名言加载中...</div>
-                    <div id="quote-author"></div>
+            <!-- 设置按钮 -->
+            <button id="settings">设置</button>
+
+            <!-- 模态框 -->
+            <div id="settings-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>设置背景</h2>
+                    <button id="set-random-image" class="modal-button">随机每日一图</button>
+                    <button id="set-today-image" class="modal-button">回到今天每日一图</button>
+                    <button id="close-modal" class="modal-close">关闭</button>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 

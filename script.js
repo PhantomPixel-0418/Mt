@@ -1,64 +1,23 @@
-// 时间更新逻辑
-function fetchTimeFromAPI() {
-    fetch('https://worldtimeapi.org/api/ip')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch time');
-            return response.json();
-        })
-        .then(data => {
-            const currentTime = new Date(data.datetime);
-            updateClock(currentTime);
-        })
-        .catch(error => {
-            console.error('Error fetching time:', error);
-            document.getElementById('time').textContent = '时间加载失败';
-        });
-}
+// 获取元素
+const settingsButton = document.getElementById('settings');
+const modal = document.getElementById('settings-modal');
+const closeModalButton = document.getElementById('close-modal');
+const randomImageButton = document.getElementById('set-random-image');
+const todayImageButton = document.getElementById('set-today-image');
 
-let timeUpdateInterval;
+// 显示模态框
+settingsButton.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    modal.classList.add('visible');
+});
 
-function updateClock(currentTime) {
-    clearInterval(timeUpdateInterval); // 清除之前的定时器，避免重复更新
+// 隐藏模态框
+closeModalButton.addEventListener('click', () => {
+    modal.classList.remove('visible');
+    modal.classList.add('hidden');
+});
 
-    function refreshTime() {
-        const hours = String(currentTime.getHours()).padStart(2, '0');
-        const minutes = String(currentTime.getMinutes()).padStart(2, '0');
-        const seconds = String(currentTime.getSeconds()).padStart(2, '0');
-        const dateString = currentTime.toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            weekday: 'long'
-        });
-
-        document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
-        document.getElementById('date').textContent = dateString;
-
-        currentTime = new Date(currentTime.getTime() + 1000); // 增加1秒
-    }
-
-    refreshTime();
-    timeUpdateInterval = setInterval(refreshTime, 1000); // 设置新的定时器
-}
-
-// 名言更新逻辑
-function fetchQuote() {
-    fetch('https://v1.jinrishici.com/all.json')
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch quote');
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('quote').textContent = data.content;
-            document.getElementById('quote-author').textContent = `——${data.author}《${data.origin}》`;
-        })
-        .catch(error => {
-            console.error('Error fetching quote:', error);
-            document.getElementById('quote').textContent = '名言加载失败';
-        });
-}
-
-// 随机每日一图
+// 随机每日一图功能
 function randomDailyImage() {
     fetch('https://api.vvhan.com/api/bing?type=json&rand=sj')
         .then(response => {
@@ -75,7 +34,7 @@ function randomDailyImage() {
         });
 }
 
-// 今日每日一图
+// 今日每日一图功能
 function todayDailyImage() {
     fetch('https://api.vvhan.com/api/bing?type=json')
         .then(response => {
@@ -92,38 +51,63 @@ function todayDailyImage() {
         });
 }
 
-// 图片详情逻辑
-function fetchImageDetails() {
-    const imageInfo = document.getElementById('image-info');
-    imageInfo.innerHTML = `<span>加载中...</span>`;
-    fetch('https://api.vvhan.com/api/bing?type=json')
+// 显示当前时间
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateString = now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('time').innerText = `${dateString} ${timeString}`;
+}
+
+setInterval(updateTime, 1000);
+
+// 加载名言
+function loadQuote() {
+    fetch('https://api.quotable.io/random')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch image details');
+            if (!response.ok) throw new Error('Failed to fetch quote');
             return response.json();
         })
         .then(data => {
-            imageInfo.innerHTML = `
-                <img src="images/picture_2.svg" alt="图片图标">
-                <span>${data.data.title}</span>
-            `;
+            document.getElementById('quote').innerText = `“${data.content}” — 《${data.author}》`;
         })
         .catch(error => {
-            console.error('Error fetching image details:', error);
-            imageInfo.innerHTML = `<span>加载失败，请稍后再试</span>`;
+            console.error('Error fetching quote:', error);
+            document.getElementById('quote').innerText = '“无法加载名言，请稍后重试。”';
         });
 }
 
-// 更新时间按钮绑定点击事件
-document.getElementById('refresh-time').addEventListener('click', () => {
-    fetchTimeFromAPI();
-    alert('时间已更新！');
-});
+// 获取时间与日期
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('zh-CN', { hour12: false });
+    const dateString = now.toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('time').textContent = timeString;
+    document.getElementById('date').textContent = dateString;
+}
 
-// 初始化
-window.onload = function () {
-    fetchTimeFromAPI();
-    fetchQuote();
-    fetchImageDetails();
-    document.getElementById('refresh-image').addEventListener('click', randomDailyImage);
-    document.getElementById('today-image').addEventListener('click', todayDailyImage);
-};
+setInterval(updateTime, 1000);
+updateTime();
+
+// 名言获取
+function updateQuote() {
+    fetch('https://v1.hitokoto.cn/?c=i')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('quote').textContent = data.hitokoto;
+            document.getElementById('author').textContent = `—— ${data.from}`;
+        })
+        .catch(() => {
+            document.getElementById('quote').textContent = '获取失败，请稍后再试！';
+            document.getElementById('author').textContent = '';
+        });
+}
+
+updateQuote();
+
+loadQuote();
+todayDailyImage()
+// 按钮绑定功能
+randomImageButton.addEventListener('click', randomDailyImage);
+todayImageButton.addEventListener('click', todayDailyImage);
+document.getElementById('refresh-time').addEventListener('click', updateTime);
